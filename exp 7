@@ -1,0 +1,100 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+
+class Book {
+    private String title;
+    private String author;
+
+    public Book(String title, String author) {
+        this.title = title;
+        this.author = author;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    @Override
+    public String toString() {
+        return title + " by " + author;
+    }
+}
+
+class LibraryUI extends JFrame {
+    private ArrayList<Book> books = new ArrayList<>();
+    private DefaultListModel<Book> listModel = new DefaultListModel<>();
+    private JList<Book> bookList = new JList<>(listModel);
+    private JTextField titleField = new JTextField(15);
+    private JTextField authorField = new JTextField(15);
+    private JTextField searchField = new JTextField(15);
+
+    public LibraryUI() {
+        setTitle("Library Management");
+        setSize(500, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        JPanel topPanel = new JPanel();
+        topPanel.add(new JLabel("Title:"));
+        topPanel.add(titleField);
+        topPanel.add(new JLabel("Author:"));
+        topPanel.add(authorField);
+        JButton addButton = new JButton("Add Book");
+        topPanel.add(addButton);
+        JButton removeButton = new JButton("Remove Book");
+        topPanel.add(removeButton);
+
+        JPanel searchPanel = new JPanel();
+        searchPanel.add(new JLabel("Search:"));
+        searchPanel.add(searchField);
+        JButton searchButton = new JButton("Search");
+        searchPanel.add(searchButton);
+
+        add(topPanel, BorderLayout.NORTH);
+        add(new JScrollPane(bookList), BorderLayout.CENTER);
+        add(searchPanel, BorderLayout.SOUTH);
+
+        addButton.addActionListener(e -> {
+            String title = titleField.getText().trim();
+            String author = authorField.getText().trim();
+            if(!title.isEmpty() && !author.isEmpty()) {
+                Book book = new Book(title, author);
+                books.add(book);
+                listModel.addElement(book);
+                titleField.setText("");
+                authorField.setText("");
+            }
+        });
+
+        removeButton.addActionListener(e -> {
+            Book selected = bookList.getSelectedValue();
+            if(selected != null) {
+                books.remove(selected);
+                listModel.removeElement(selected);
+            }
+        });
+
+        searchButton.addActionListener(e -> {
+            String query = searchField.getText().trim().toLowerCase();
+            listModel.clear();
+            for(Book b : books) {
+                if(b.getTitle().toLowerCase().contains(query) || b.getAuthor().toLowerCase().contains(query)) {
+                    listModel.addElement(b);
+                }
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            LibraryUI ui = new LibraryUI();
+            ui.setVisible(true);
+        });
+    }
+}
