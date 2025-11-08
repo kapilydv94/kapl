@@ -1,0 +1,61 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <set>
+using namespace std;
+
+struct Product {
+    string name;
+    double price;
+    string category;
+};
+
+void displayProducts(const vector<Product>& products, const string& filter) {
+    for (const auto& p : products) {
+        if (filter == "All" || p.category == filter) {
+            cout << "Name: " << p.name 
+                 << ", Price: $" << p.price 
+                 << ", Category: " << p.category << endl;
+        }
+    }
+}
+
+int main() {
+    vector<Product> products = {
+        {"Laptop", 50000, "Electronics"},
+        {"Headphones", 2000, "Electronics"},
+        {"Shoes", 1500, "Fashion"},
+        {"T-Shirt", 500, "Fashion"},
+        {"Book", 300, "Education"}
+    };
+
+    set<string> categories;
+    categories.insert("All");
+    for (const auto& p : products) {
+        categories.insert(p.category);
+    }
+
+    while (true) {
+        cout << "\nCategories:\n";
+        int i = 1;
+        vector<string> categoryList;
+        for (const auto& c : categories) {
+            cout << i << ". " << c << endl;
+            categoryList.push_back(c);
+            i++;
+        }
+        cout << "Select category number (0 to exit): ";
+        int choice;
+        cin >> choice;
+        if (choice == 0) break;
+        if (choice > 0 && choice <= categoryList.size()) {
+            string filter = categoryList[choice - 1];
+            cout << "\nFiltered Products (" << filter << "):\n";
+            displayProducts(products, filter);
+        } else {
+            cout << "Invalid choice. Try again.\n";
+        }
+    }
+
+    return 0;
+}
