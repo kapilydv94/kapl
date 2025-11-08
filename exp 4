@@ -1,0 +1,17 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string input;
+    cout << "Type text (press Enter to finish):\n";
+
+    while (true) {
+        getline(cin, input);
+        if (input.empty()) break;
+        cout << "Characters typed: " << input.length() << endl;
+    }
+
+    cout << "Finished typing.\n";
+    return 0;
+}
