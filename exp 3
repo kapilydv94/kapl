@@ -1,0 +1,48 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+enum Theme { LIGHT, DARK };
+
+void setTheme(Theme theme) {
+    if (theme == LIGHT) {
+        cout << "\033[0;37;40m"; // white text on black bg
+    } else {
+        cout << "\033[0;30;47m"; // black text on white bg
+    }
+}
+
+void displayDashboard(const vector<string>& sections) {
+    cout << "\n=== Admin Dashboard ===\n\n";
+    for (size_t i = 0; i < sections.size(); i++) {
+        cout << "[" << i + 1 << "] " << sections[i] << "\t";
+        if ((i + 1) % 3 == 0) cout << "\n";
+    }
+    cout << "\n\n";
+}
+
+int main() {
+    vector<string> sections = {"Users", "Products", "Orders", "Analytics", "Settings", "Reports"};
+    Theme currentTheme = LIGHT;
+    setTheme(currentTheme);
+
+    while (true) {
+        displayDashboard(sections);
+        cout << "Menu:\n1. Switch Theme\n2. Exit\nChoose option: ";
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            currentTheme = (currentTheme == LIGHT) ? DARK : LIGHT;
+            setTheme(currentTheme);
+        } else if (choice == 2) {
+            cout << "\033[0m"; // reset colors
+            break;
+        } else {
+            cout << "Invalid choice.\n";
+        }
+    }
+
+    return 0;
+}
