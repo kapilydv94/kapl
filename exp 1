@@ -1,0 +1,32 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Student {
+    string name;
+    int age;
+    string gender;
+    string course;
+};
+
+int main() {
+    Student student;
+    cout << "=== Student Registration Form ===\n";
+    cout << "Enter Name: ";
+    getline(cin, student.name);
+    cout << "Enter Age: ";
+    cin >> student.age;
+    cin.ignore();
+    cout << "Enter Gender (Male/Female/Other): ";
+    getline(cin, student.gender);
+    cout << "Enter Course: ";
+    getline(cin, student.course);
+
+    cout << "\n--- Registration Details ---\n";
+    cout << "Name: " << student.name << endl;
+    cout << "Age: " << student.age << endl;
+    cout << "Gender: " << student.gender << endl;
+    cout << "Course: " << student.course << endl;
+
+    return 0;
+}
