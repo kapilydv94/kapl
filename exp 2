@@ -1,50 +1,118 @@
-#include <iostream>
-#include <limits>
-using namespace std;
-
-class BankAccount {
-    double balance;
-public:
-    BankAccount(double initial = 0) : balance(initial) {}
-    void deposit(double amount) { balance += amount; }
-    void withdraw(double amount) {
-        if(amount > balance) cout << "Insufficient balance.\n";
-        else balance -= amount;
-    }
-    double getBalance() const { return balance; }
-};
-
-int main() {
-    BankAccount account;
-    int choice;
-    double amount;
-
-    while(true) {
-        cout << "\n=== Banking UI ===\n";
-        cout << "1. Deposit\n2. Withdraw\n3. Check Balance\n4. Exit\n";
-        cout << "Choose an option: ";
-        cin >> choice;
-
-        if(choice == 1) {
-            cout << "Enter deposit amount: ";
-            cin >> amount;
-            account.deposit(amount);
-            cout << "Deposited: $" << amount << endl;
-        } else if(choice == 2) {
-            cout << "Enter withdrawal amount: ";
-            cin >> amount;
-            account.withdraw(amount);
-        } else if(choice == 3) {
-            cout << "Current Balance: $" << account.getBalance() << endl;
-        } else if(choice == 4) {
-            break;
-        } else {
-            cout << "Invalid option. Try again.\n";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Dashboard</title>
+    <style>
+        /* General Body Styling */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
+        /* Banking Container */
+        .bank-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 350px;
+            max-width: 90%;
+            text-align: center;
+        }
 
-    return 0;
-}
+        /* Heading */
+        .bank-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* Balance Display */
+        .balance {
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-deposit {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .btn-deposit:hover {
+            background-color: #388e3c;
+        }
+
+        .btn-withdraw {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-withdraw:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 400px) {
+            .btn {
+                width: 100%;
+                margin: 8px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bank-container">
+        <h2>My Bank Account</h2>
+        <div class="balance" id="balance">$0.00</div>
+        <button class="btn btn-deposit" onclick="deposit()">Deposit $100</button>
+        <button class="btn btn-withdraw" onclick="withdraw()">Withdraw $50</button>
+    </div>
+
+    <script>
+        let balance = 0;
+        const balanceDisplay = document.getElementById('balance');
+
+        function deposit() {
+            balance += 100;
+            updateBalance();
+        }
+
+        function withdraw() {
+            if(balance >= 50) {
+                balance -= 50;
+            } else {
+                alert("Insufficient Balance!");
+            }
+            updateBalance();
+        }
+
+        function updateBalance() {
+            balanceDisplay.textContent = `$${balance.toFixed(2)}`;
+        }
+    </script>
+
+</body>
+</html>
