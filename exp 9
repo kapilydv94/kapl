@@ -1,79 +1,186 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+// server.js
+
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const path = require("path");
 
 const app = express();
-app.use(bodyParser.json());
-
-mongoose.connect('mongodb://127.0.0.1:27017/productDB', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log("MongoDB connected"))
-.catch(err => console.log(err));
-
-const productSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    category: String
-});
-
-const Product = mongoose.model('Product', productSchema);
-
-app.post('/products', async (req, res) => {
-    try {
-        const product = new Product(req.body);
-        const savedProduct = await product.save();
-        res.status(201).json(savedProduct);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
-});
-
-app.get('/products', async (req, res) => {
-    try {
-        const products = await Product.find();
-        res.json(products);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.get('/products/:id', async (req, res) => {
-    try {
-        const product = await Product.findById(req.params.id);
-        if (!product) return res.status(404).json({ error: "Product not found" });
-        res.json(product);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.put('/products/:id', async (req, res) => {
-    try {
-        const updatedProduct = await Product.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true }
-        );
-        if (!updatedProduct) return res.status(404).json({ error: "Product not found" });
-        res.json(updatedProduct);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
-});
-
-app.delete('/products/:id', async (req, res) => {
-    try {
-        const deletedProduct = await Product.findByIdAndDelete(req.params.id);
-        if (!deletedProduct) return res.status(404).json({ error: "Product not found" });
-        res.json({ message: "Product deleted successfully" });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
 const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+
+// Middleware
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "public"))); // Serve frontend
+
+// MongoDB connection
+const mongoURI = "mongodb://127.0.0.1:27017/libraryDB"; // Replace if needed
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("MongoDB connected successfully"))
+    .catch(err => console.error("MongoDB connection error:", err));
+
+// Schema & Model
+const BookSchema = new mongoose.Schema({
+    title: String,
+    author: String,
+    year: Number
 });
+const Book = mongoose.model("Book", BookSchema);
+
+// Routes
+app.get("/books", async (req, res) => {
+    const books = await Book.find();
+    res.json(books);
+});
+
+app.post("/books", async (req, res) => {
+    const { title, author, year } = req.body;
+    const newBook = new Book({ title, author, year });
+    await newBook.save();
+    res.json({ message: "Book added successfully", book: newBook });
+});
+
+app.delete("/books/:id", async (req, res) => {
+    await Book.findByIdAndDelete(req.params.id);
+    res.json({ message: "Book deleted successfully" });
+});
+
+// Serve index.html for root
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+});
+
+// public/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Management</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    padding: 20px;
+}
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+h2 {
+    text-align: center;
+    color: #333;
+}
+input, button {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+button {
+    background-color: #1abc9c;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+button:hover { background-color: #16a085; }
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+li {
+    background: #f9f9f9;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+li button {
+    background-color: #e74c3c;
+}
+li button:hover { background-color: #c0392b; }
+</style>
+</head>
+<body>
+
+<div class="container">
+<h2>Library Management</h2>
+
+<input type="text" id="title" placeholder="Book Title">
+<input type="text" id="author" placeholder="Author">
+<input type="number" id="year" placeholder="Year">
+<button onclick="addBook()">Add Book</button>
+
+<input type="text" id="search" placeholder="Search book..." onkeyup="searchBook()">
+
+<ul id="bookList"></ul>
+</div>
+
+<script>
+const apiUrl = "/books";
+
+async function fetchBooks() {
+    const res = await fetch(apiUrl);
+    const books = await res.json();
+    displayBooks(books);
+}
+
+function displayBooks(books) {
+    const bookList = document.getElementById("bookList");
+    bookList.innerHTML = "";
+    books.forEach(book => {
+        const li = document.createElement("li");
+        li.textContent = `${book.title} by ${book.author} (${book.year})`;
+        const btn = document.createElement("button");
+        btn.textContent = "Remove";
+        btn.onclick = async () => {
+            await fetch(`${apiUrl}/${book._id}`, { method: "DELETE" });
+            fetchBooks();
+        };
+        li.appendChild(btn);
+        bookList.appendChild(li);
+    });
+}
+
+async function addBook() {
+    const title = document.getElementById("title").value.trim();
+    const author = document.getElementById("author").value.trim();
+    const year = document.getElementById("year").value;
+    if(!title || !author || !year) return alert("Please fill all fields");
+    await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, author, year })
+    });
+    document.getElementById("title").value = "";
+    document.getElementById("author").value = "";
+    document.getElementById("year").value = "";
+    fetchBooks();
+}
+
+function searchBook() {
+    const filter = document.getElementById("search").value.toLowerCase();
+    const lis = document.getElementById("bookList").getElementsByTagName("li");
+    Array.from(lis).forEach(li => {
+        li.style.display = li.textContent.toLowerCase().includes(filter) ? "" : "none";
+    });
+}
+
+fetchBooks();
+</script>
+
+</body>
+</html>
