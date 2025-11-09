@@ -1,61 +1,126 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <set>
-using namespace std;
-
-struct Product {
-    string name;
-    double price;
-    string category;
-};
-
-void displayProducts(const vector<Product>& products, const string& filter) {
-    for (const auto& p : products) {
-        if (filter == "All" || p.category == filter) {
-            cout << "Name: " << p.name 
-                 << ", Price: $" << p.price 
-                 << ", Category: " << p.category << endl;
-        }
-    }
-}
-
-int main() {
-    vector<Product> products = {
-        {"Laptop", 50000, "Electronics"},
-        {"Headphones", 2000, "Electronics"},
-        {"Shoes", 1500, "Fashion"},
-        {"T-Shirt", 500, "Fashion"},
-        {"Book", 300, "Education"}
-    };
-
-    set<string> categories;
-    categories.insert("All");
-    for (const auto& p : products) {
-        categories.insert(p.category);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Product Filter</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 20px;
     }
 
-    while (true) {
-        cout << "\nCategories:\n";
-        int i = 1;
-        vector<string> categoryList;
-        for (const auto& c : categories) {
-            cout << i << ". " << c << endl;
-            categoryList.push_back(c);
-            i++;
-        }
-        cout << "Select category number (0 to exit): ";
-        int choice;
-        cin >> choice;
-        if (choice == 0) break;
-        if (choice > 0 && choice <= categoryList.size()) {
-            string filter = categoryList[choice - 1];
-            cout << "\nFiltered Products (" << filter << "):\n";
-            displayProducts(products, filter);
-        } else {
-            cout << "Invalid choice. Try again.\n";
-        }
+    .container {
+        max-width: 900px;
+        margin: auto;
     }
 
-    return 0;
-}
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    select {
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-bottom: 30px;
+        width: 200px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .products {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .product-card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: transform 0.2s;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .product-card h3 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    .product-card p {
+        color: #555;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Product Catalog</h2>
+
+    <select id="categoryFilter">
+        <option value="all">All Categories</option>
+        <option value="electronics">Electronics</option>
+        <option value="clothing">Clothing</option>
+        <option value="books">Books</option>
+    </select>
+
+    <div class="products" id="productList">
+        <div class="product-card" data-category="electronics">
+            <h3>Smartphone</h3>
+            <p>Category: Electronics</p>
+        </div>
+        <div class="product-card" data-category="clothing">
+            <h3>T-Shirt</h3>
+            <p>Category: Clothing</p>
+        </div>
+        <div class="product-card" data-category="books">
+            <h3>JavaScript Book</h3>
+            <p>Category: Books</p>
+        </div>
+        <div class="product-card" data-category="electronics">
+            <h3>Laptop</h3>
+            <p>Category: Electronics</p>
+        </div>
+        <div class="product-card" data-category="clothing">
+            <h3>Jeans</h3>
+            <p>Category: Clothing</p>
+        </div>
+        <div class="product-card" data-category="books">
+            <h3>HTML & CSS Guide</h3>
+            <p>Category: Books</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const filterDropdown = document.getElementById('categoryFilter');
+    const productList = document.getElementById('productList');
+    const products = productList.querySelectorAll('.product-card');
+
+    filterDropdown.addEventListener('change', () => {
+        const selectedCategory = filterDropdown.value;
+
+        products.forEach(product => {
+            if (selectedCategory === 'all' || product.dataset.category === selectedCategory) {
+                product.style.display = 'block';
+            } else {
+                product.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
