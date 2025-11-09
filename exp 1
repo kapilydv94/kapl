@@ -1,32 +1,111 @@
-#include <iostream>
-#include <string>
-using namespace std;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration Form</title>
+    <style>
+        /* Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-struct Student {
-    string name;
-    int age;
-    string gender;
-    string course;
-};
+        /* Form Container */
+        .registration-form {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+            width: 400px;
+        }
 
-int main() {
-    Student student;
-    cout << "=== Student Registration Form ===\n";
-    cout << "Enter Name: ";
-    getline(cin, student.name);
-    cout << "Enter Age: ";
-    cin >> student.age;
-    cin.ignore();
-    cout << "Enter Gender (Male/Female/Other): ";
-    getline(cin, student.gender);
-    cout << "Enter Course: ";
-    getline(cin, student.course);
+        .registration-form h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
 
-    cout << "\n--- Registration Details ---\n";
-    cout << "Name: " << student.name << endl;
-    cout << "Age: " << student.age << endl;
-    cout << "Gender: " << student.gender << endl;
-    cout << "Course: " << student.course << endl;
+        /* Input Fields */
+        .registration-form input[type="text"],
+        .registration-form input[type="email"],
+        .registration-form input[type="password"],
+        .registration-form select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-    return 0;
-}
+        /* Radio Buttons */
+        .gender {
+            margin-bottom: 20px;
+        }
+
+        .gender label {
+            margin-right: 15px;
+            font-size: 14px;
+        }
+
+        /* Submit Button */
+        .registration-form input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #5c6bc0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .registration-form input[type="submit"]:hover {
+            background-color: #3949ab;
+        }
+    </style>
+</head>
+<body>
+
+    <form class="registration-form">
+        <h2>Student Registration</h2>
+
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+        <div class="gender">
+            <label>Gender:</label>
+            <input type="radio" id="male" name="gender" value="male" required>
+            <label for="male">Male</label>
+
+            <input type="radio" id="female" name="gender" value="female">
+            <label for="female">Female</label>
+
+            <input type="radio" id="other" name="gender" value="other">
+            <label for="other">Other</label>
+        </div>
+
+        <label for="course">Course</label>
+        <select id="course" name="course" required>
+            <option value="">Select your course</option>
+            <option value="computer_science">Computer Science</option>
+            <option value="mechanical">Mechanical Engineering</option>
+            <option value="electrical">Electrical Engineering</option>
+            <option value="civil">Civil Engineering</option>
+        </select>
+
+        <input type="submit" value="Register">
+    </form>
+
+</body>
+</html>
