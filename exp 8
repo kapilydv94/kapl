@@ -1,83 +1,119 @@
-class Person {
-    private String name;
-    private int age;
-
-    public Person(String name, int age) {
-        this.name = name;
-        this.age = age;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Person Class Hierarchy</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        padding-top: 30px;
     }
 
-    public String getName() {
-        return name;
+    .container {
+        background-color: #fff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        width: 500px;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
     }
 
-    public int getAge() {
-        return age;
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        background-color: #1abc9c;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        margin: 10px 5px 20px 5px;
+        transition: background-color 0.3s;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    button:hover {
+        background-color: #16a085;
     }
 
-    public void displayInfo() {
-        System.out.println("Name: " + name + ", Age: " + age);
+    .output {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+        color: #333;
     }
-}
+</style>
+</head>
+<body>
 
-class Student extends Person {
-    private String studentId;
+<div class="container">
+    <h2>Person Class Hierarchy</h2>
+    <button onclick="showStudent()">Show Student Info</button>
+    <button onclick="showTeacher()">Show Teacher Info</button>
 
-    public Student(String name, int age, String studentId) {
-        super(name, age);
-        this.studentId = studentId;
-    }
+    <div class="output" id="output">Click a button to display details.</div>
+</div>
 
-    public String getStudentId() {
-        return studentId;
-    }
+<script>
+    // Base Class
+    class Person {
+        constructor(name, age) {
+            this.name = name;
+            this.age = age;
+        }
 
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
-    }
-
-    @Override
-    public void displayInfo() {
-        System.out.println("Name: " + getName() + ", Age: " + getAge() + ", Student ID: " + studentId);
-    }
-}
-
-class Teacher extends Person {
-    private String subject;
-
-    public Teacher(String name, int age, String subject) {
-        super(name, age);
-        this.subject = subject;
+        getDetails() {
+            return `Name: ${this.name}, Age: ${this.age}`;
+        }
     }
 
-    public String getSubject() {
-        return subject;
+    // Student Subclass
+    class Student extends Person {
+        constructor(name, age, grade) {
+            super(name, age);
+            this.grade = grade;
+        }
+
+        getDetails() {
+            return `${super.getDetails()}, Grade: ${this.grade}`;
+        }
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    // Teacher Subclass
+    class Teacher extends Person {
+        constructor(name, age, subject) {
+            super(name, age);
+            this.subject = subject;
+        }
+
+        getDetails() {
+            return `${super.getDetails()}, Subject: ${this.subject}`;
+        }
     }
 
-    @Override
-    public void displayInfo() {
-        System.out.println("Name: " + getName() + ", Age: " + getAge() + ", Subject: " + subject);
-    }
-}
+    // Create objects
+    const student1 = new Student("Alice", 20, "A");
+    const teacher1 = new Teacher("Mr. Smith", 45, "Mathematics");
 
-class Tester {
-    public static void main(String[] args) {
-        Student s = new Student("Alice", 20, "S123");
-        Teacher t = new Teacher("Bob", 40, "Mathematics");
-
-        s.displayInfo();
-        t.displayInfo();
+    // Functions to display info
+    function showStudent() {
+        document.getElementById("output").textContent = student1.getDetails();
     }
-}
+
+    function showTeacher() {
+        document.getElementById("output").textContent = teacher1.getDetails();
+    }
+</script>
+
+</body>
+</html>
