@@ -1,100 +1,133 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-
-class Book {
-    private String title;
-    private String author;
-
-    public Book(String title, String author) {
-        this.title = title;
-        this.author = author;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Management UI</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
     }
 
-    public String getTitle() {
-        return title;
+    .container {
+        background-color: #fff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        margin-top: 30px;
+        width: 500px;
     }
 
-    public String getAuthor() {
-        return author;
+    h2 {
+        text-align: center;
+        color: #333;
     }
 
-    @Override
-    public String toString() {
-        return title + " by " + author;
+    input[type="text"] {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 16px;
     }
-}
 
-class LibraryUI extends JFrame {
-    private ArrayList<Book> books = new ArrayList<>();
-    private DefaultListModel<Book> listModel = new DefaultListModel<>();
-    private JList<Book> bookList = new JList<>(listModel);
-    private JTextField titleField = new JTextField(15);
-    private JTextField authorField = new JTextField(15);
-    private JTextField searchField = new JTextField(15);
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        background-color: #1abc9c;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        margin-right: 10px;
+        transition: background-color 0.3s;
+    }
 
-    public LibraryUI() {
-        setTitle("Library Management");
-        setSize(500, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+    button:hover {
+        background-color: #16a085;
+    }
 
-        JPanel topPanel = new JPanel();
-        topPanel.add(new JLabel("Title:"));
-        topPanel.add(titleField);
-        topPanel.add(new JLabel("Author:"));
-        topPanel.add(authorField);
-        JButton addButton = new JButton("Add Book");
-        topPanel.add(addButton);
-        JButton removeButton = new JButton("Remove Book");
-        topPanel.add(removeButton);
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
 
-        JPanel searchPanel = new JPanel();
-        searchPanel.add(new JLabel("Search:"));
-        searchPanel.add(searchField);
-        JButton searchButton = new JButton("Search");
-        searchPanel.add(searchButton);
+    li {
+        padding: 10px;
+        margin: 8px 0;
+        background-color: #f9f9f9;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-        add(topPanel, BorderLayout.NORTH);
-        add(new JScrollPane(bookList), BorderLayout.CENTER);
-        add(searchPanel, BorderLayout.SOUTH);
+    li button {
+        background-color: #e74c3c;
+        margin: 0;
+    }
 
-        addButton.addActionListener(e -> {
-            String title = titleField.getText().trim();
-            String author = authorField.getText().trim();
-            if(!title.isEmpty() && !author.isEmpty()) {
-                Book book = new Book(title, author);
-                books.add(book);
-                listModel.addElement(book);
-                titleField.setText("");
-                authorField.setText("");
-            }
+    li button:hover {
+        background-color: #c0392b;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Library Management</h2>
+
+    <input type="text" id="searchInput" placeholder="Search book..." onkeyup="searchBook()">
+    <input type="text" id="bookInput" placeholder="Add new book">
+    <button onclick="addBook()">Add Book</button>
+
+    <ul id="bookList">
+        <li>JavaScript Basics <button onclick="removeBook(this)">Remove</button></li>
+        <li>HTML & CSS Guide <button onclick="removeBook(this)">Remove</button></li>
+        <li>React for Beginners <button onclick="removeBook(this)">Remove</button></li>
+    </ul>
+</div>
+
+<script>
+    function addBook() {
+        const bookInput = document.getElementById('bookInput');
+        const bookName = bookInput.value.trim();
+
+        if (bookName === "") {
+            alert("Please enter a book name.");
+            return;
+        }
+
+        const li = document.createElement('li');
+        li.innerHTML = `${bookName} <button onclick="removeBook(this)">Remove</button>`;
+
+        document.getElementById('bookList').appendChild(li);
+        bookInput.value = "";
+    }
+
+    function removeBook(button) {
+        const li = button.parentElement;
+        li.remove();
+    }
+
+    function searchBook() {
+        const filter = document.getElementById('searchInput').value.toLowerCase();
+        const lis = document.getElementById('bookList').getElementsByTagName('li');
+
+        Array.from(lis).forEach((li) => {
+            const bookName = li.firstChild.textContent.toLowerCase();
+            li.style.display = bookName.includes(filter) ? "" : "none";
         });
-
-        removeButton.addActionListener(e -> {
-            Book selected = bookList.getSelectedValue();
-            if(selected != null) {
-                books.remove(selected);
-                listModel.removeElement(selected);
-            }
-        });
-
-        searchButton.addActionListener(e -> {
-            String query = searchField.getText().trim().toLowerCase();
-            listModel.clear();
-            for(Book b : books) {
-                if(b.getTitle().toLowerCase().contains(query) || b.getAuthor().toLowerCase().contains(query)) {
-                    listModel.addElement(b);
-                }
-            }
-        });
     }
+</script>
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            LibraryUI ui = new LibraryUI();
-            ui.setVisible(true);
-        });
-    }
-}
+</body>
+</html>
